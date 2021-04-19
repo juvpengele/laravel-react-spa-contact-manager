@@ -49,7 +49,7 @@ function Register() {
                             " placeholder="********"/>
                         </div>
                         <div className="flex items-center justify-end pt-6">
-                            <Link className="border-gray-400 border-2 text-gray-700 bg-white-800 text-white px-5 py-2 rounded-md mr-2">
+                            <Link className="border-gray-400 border-2 text-gray-700 bg-white-800 text-white px-5 py-2 rounded-md mr-2" to="/">
                                 Go home
                             </Link>
                             <button className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md">
