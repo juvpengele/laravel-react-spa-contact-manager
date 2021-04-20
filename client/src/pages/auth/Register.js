@@ -16,7 +16,7 @@ function Register() {
                         Login
                     </Link>
                 </div>
-                <div className="flex-1 md:w-full lg:w-1/2 mx-auto flex flex-col justify-center">
+                <div className="flex-1 w-full lg:w-1/2 mx-auto flex flex-col justify-center">
                     <h1 className="text-4xl ">
                         Register
                     </h1>

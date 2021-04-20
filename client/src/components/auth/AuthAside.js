@@ -8,6 +8,10 @@ function AuthAside() {
                 <p className="pt-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
+                <div className="flex justify-center mt-8">
+                    <img src="/assets/img/auth-illustration.svg" width="300"/>
+                </div>
+                
             </div>
         </div>
     )
