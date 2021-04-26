@@ -2,8 +2,35 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {usePageTitle} from "../../hooks";
 import AuthLayout from "../../layouts/AuthLayout";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+
+const validationSchema = Yup.object().shape({
+    name: Yup.string().required("Le nom est obligatoire"),
+    username: Yup.string().required("Le nom d'utilisateur est obligatoire"),
+    email: Yup.string().required("L'adresse e-mail est obligatoire").email("Veuillez fournir une adresse e-mail valide"),
+    password: Yup.string().required("Le mot de passe est obligatoire").min(8, "Le mot de passe doit avoir au moins 8 caractères")
+})
 
 function Register() {
+    const initialValues = {
+        name: "",
+        username: "",
+        email: "",
+        password: ""
+    }
+
+    async function handleSubmit(formValues, onSubmittingProps) {
+        console.log(formValues)
+    }
+
+    const formik = useFormik({
+        initialValues,
+        onSubmit: handleSubmit,
+        validationSchema
+    })
+
+
 
     usePageTitle("Register");
 
@@ -22,37 +49,74 @@ function Register() {
                     </h1>
                     <p className="mb-10"> Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
                     
-                    <form>
+                    <form onSubmit={formik.handleSubmit}>
                         <div className="mb-4">
                             <label for="name">Full name</label>
                             <input type="text" id="name" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
-                            " placeholder="John Doe"/>
+                            " placeholder="John Doe"
+                                value={formik.name}
+                                {...formik.getFieldProps('name')}
+                            />
+                            {
+                                formik.touched.name && formik.errors.name &&
+                                <div className="text-sm text-red-500 mt-1">
+                                    { formik.errors.name}
+                                </div>
+                            }
+                            
                         </div>
                         <div className="mb-4">
                             <label for="username">Username</label>
                             <input type="text" id="username" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             " 
                             placeholder="JohnDoe"
+                            value={formik.username}
+                                {...formik.getFieldProps('username')}
                             />
+                            {
+                                formik.touched.username && formik.errors.username &&
+                                <div className="text-sm text-red-500 mt-1">
+                                    { formik.errors.username}
+                                </div>
+                            }
                         </div>
                         <div className="mb-4">
                             <label for="email">Email</label>
                             <input type="email" id="email" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             "
                             placeholder="john@example.com"
+                            value={formik.email}
+                            {...formik.getFieldProps('email')}
                             />
+                            {
+                                formik.touched.email && formik.errors.email &&
+                                <div className="text-sm text-red-500 mt-1">
+                                    { formik.errors.email}
+                                </div>
+                            }
                         </div>
                         <div className="mb-4">
                             <label for="password">Password</label>
                             <input type="password" id="password" className="
                             border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
-                            " placeholder="********"/>
+                            " placeholder="********"
+                            value={formik.password}
+                            {...formik.getFieldProps('password')}
+                            />
+                            {
+                                formik.touched.password && formik.errors.password &&
+                                <div className="text-sm text-red-500 mt-1">
+                                    { formik.errors.password}
+                                </div>
+                            }
                         </div>
                         <div className="flex items-center justify-end pt-6">
                             <Link className="border-gray-400 border-2 text-gray-700 bg-white-800 text-white px-5 py-2 rounded-md mr-2" to="/">
                                 Go home
                             </Link>
-                            <button className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md">
+                            <button className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md"
+                                disabled={! formik.isValid || formik.isSubmitting}
+                            >
                                 Register
                             </button>
                         </div>
