@@ -4,13 +4,14 @@ import {usePageTitle} from "../../hooks";
 import AuthLayout from "../../layouts/AuthLayout";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { httpClient } from "../../config";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Le nom est obligatoire"),
     username: Yup.string().required("Le nom d'utilisateur est obligatoire"),
     email: Yup.string().required("L'adresse e-mail est obligatoire").email("Veuillez fournir une adresse e-mail valide"),
     password: Yup.string().required("Le mot de passe est obligatoire").min(8, "Le mot de passe doit avoir au moins 8 caractères")
-})
+});
 
 function Register() {
     const initialValues = {
@@ -18,18 +19,31 @@ function Register() {
         username: "",
         email: "",
         password: ""
+    };
+
+    function handleFormErrors(formErrors, onSubmittingProps) {
+        for(let key in formErrors) {
+            onSubmittingProps.setFieldError(key, formErrors[key]);
+        }
     }
 
     async function handleSubmit(formValues, onSubmittingProps) {
-        console.log(formValues)
+        try {
+            const response = await httpClient().post("/auth/register", formValues);
+
+            onSubmittingProps.resetForm();
+        } catch(errors) {
+            if(errors.response?.data?.errors) {
+                handleFormErrors(errors.response?.data?.errors, onSubmittingProps)
+            }
+        }
     }
 
     const formik = useFormik({
         initialValues,
         onSubmit: handleSubmit,
         validationSchema
-    })
-
+    });
 
 
     usePageTitle("Register");
