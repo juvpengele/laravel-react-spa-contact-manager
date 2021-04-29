@@ -17,7 +17,7 @@ class RegistrationToken extends Mailable
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param User $user
      */
     public function __construct(User $user)
     {
@@ -31,7 +31,9 @@ class RegistrationToken extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.registration-token', compact($this->user));
+        return $this->markdown('mails.registration-token', [
+            "user" => $this->user
+        ]);
     }
 }
 

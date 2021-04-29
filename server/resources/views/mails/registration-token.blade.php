@@ -1,11 +1,13 @@
 @component('mail::message')
-# Introduction
+# Registration,
 
-The body of your message.
+Mr / Ms {{ $user->name }}, you receive this email because you registered to our platform.
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+To complete your registration, please enter this registration code:
+
+<p style="text-align: center; font-weight: bold; color: black">
+    {{ $user->remember_token }}
+</p>
 
 Thanks,<br>
 {{ config('app.name') }}

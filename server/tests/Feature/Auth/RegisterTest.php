@@ -166,4 +166,14 @@ class RegisterTest extends TestCase
 
         $this->assertContains("password", array_keys($jsonResponse["errors"]));
     }
+
+    /** @test */
+    public function registration_email_contains_registration_token()
+    {
+        $user = User::factory()->create();
+
+        $registrationMail = new RegistrationToken($user);
+
+        $registrationMail->assertSeeInHtml($user->remember_token);
+    }
 }
