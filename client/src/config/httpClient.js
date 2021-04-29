@@ -1,13 +1,13 @@
 import axios from "axios";
-import env from "./env";
+import config from "./env"
 
 
-export default function httpClient(config = {}) {
+export default function httpClient(headers = {}) {
     return axios.create({
-        baseURL: env.apiBaseUrl,
+        baseURL: config.apiBaseUrl,
         headers: {
             "Content-Type": "application/json",
-            ...config
+            ...headers
         }
     })
 }

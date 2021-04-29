@@ -5,6 +5,8 @@ import AuthLayout from "../../layouts/AuthLayout";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { httpClient } from "../../config";
+import { Loader } from "../../components/utilities";
+import { useToasts } from "react-toast-notifications"
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Le nom est obligatoire"),
@@ -14,6 +16,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function Register() {
+    const { addToast } = useToasts();
     const initialValues = {
         name: "",
         username: "",
@@ -28,10 +31,16 @@ function Register() {
     }
 
     async function handleSubmit(formValues, onSubmittingProps) {
+
         try {
-            const response = await httpClient().post("/auth/register", formValues);
+            await httpClient().post("/auth/register", formValues);
 
             onSubmittingProps.resetForm();
+            addToast("Bravo ! Votre inscription s'est bien passée... ", {
+                appearance: "success",
+                placement: "bottom-right"
+            });
+
         } catch(errors) {
             if(errors.response?.data?.errors) {
                 handleFormErrors(errors.response?.data?.errors, onSubmittingProps)
@@ -65,7 +74,7 @@ function Register() {
                     
                     <form onSubmit={formik.handleSubmit}>
                         <div className="mb-4">
-                            <label for="name">Full name</label>
+                            <label htmlFor="name">Full name</label>
                             <input type="text" id="name" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             " placeholder="John Doe"
                                 value={formik.name}
@@ -80,7 +89,7 @@ function Register() {
                             
                         </div>
                         <div className="mb-4">
-                            <label for="username">Username</label>
+                            <label htmlFor="username">Username</label>
                             <input type="text" id="username" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             " 
                             placeholder="JohnDoe"
@@ -95,7 +104,7 @@ function Register() {
                             }
                         </div>
                         <div className="mb-4">
-                            <label for="email">Email</label>
+                            <label htmlFor="email">Email</label>
                             <input type="email" id="email" className="border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             "
                             placeholder="john@example.com"
@@ -110,7 +119,7 @@ function Register() {
                             }
                         </div>
                         <div className="mb-4">
-                            <label for="password">Password</label>
+                            <label htmlFor="password">Password</label>
                             <input type="password" id="password" className="
                             border-gray-300 border-2 rounded-md px-3 py-2 block focus:outline-none focus:shadow-outline w-full
                             " placeholder="********"
@@ -128,9 +137,11 @@ function Register() {
                             <Link className="border-gray-400 border-2 text-gray-700 bg-white-800 text-white px-5 py-2 rounded-md mr-2" to="/">
                                 Go home
                             </Link>
-                            <button className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md"
+                            <button className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md
+                             flex justify-center items-center"
                                 disabled={! formik.isValid || formik.isSubmitting}
                             >
+                                { formik.isSubmitting && <Loader className="mr-2"/> }
                                 Register
                             </button>
                         </div>
