@@ -28,4 +28,5 @@ Route::get("/", function() {
 
 Route::group(["prefix" => "auth"], function() {
     Route::post("register", [RegisterController::class, "store"])->name("auth.register");
+    Route::post("confirm", [RegisterController::class, "confirm"])->name("auth.confirm");
 });
