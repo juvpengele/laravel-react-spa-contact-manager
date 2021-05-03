@@ -12,6 +12,8 @@ use App\Mail\RegistrationToken;
 
 class RegisterController extends Controller
 {
+    use AuthApiData;
+
     public function store(RegistrationRequest $request)
     {
         $user = User::create($request->data());
@@ -40,17 +42,11 @@ class RegisterController extends Controller
             ]
         ]);
 
-
         $user->update([
             "email_verified_at" => now(),
             "remember_token" => null
         ]);
 
-        $token = $user->createToken("api:auth")->plainTextToken;
-
-        return response()->json([
-            "api_token" => $token,
-            "auth"  => $user->toArray()
-        ], 200);
+        return $this->getAuthApiData($user);
     }
 }
