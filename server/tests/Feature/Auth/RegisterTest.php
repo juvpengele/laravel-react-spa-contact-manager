@@ -186,7 +186,7 @@ class RegisterTest extends TestCase
         $confirmationToken = "12345";
         $user = User::factory()->create([ "remember_token" => $confirmationToken, "email_verified_at" => null ]);
 
-        $this->post(route("auth.confirm",  [ "token" => $confirmationToken ]));
+        $this->postJson(route("auth.confirm",  [ "token" => $confirmationToken ]));
 
         $this->assertNotNull($user->fresh()->email_verified_at);
         $this->assertNull($user->fresh()->remember_token);
@@ -200,7 +200,7 @@ class RegisterTest extends TestCase
         $confirmationToken = "12345";
         $user = User::factory()->create([ "remember_token" => $confirmationToken, "email_verified_at" => null ]);
 
-        $response = $this->post(route("auth.confirm",  [ "token" => $confirmationToken ]));
+        $response = $this->postJson(route("auth.confirm",  [ "token" => $confirmationToken ]));
 
         $response->assertStatus(200)
                 ->assertJson(function (AssertableJson $assertableJson) use ($user) {
@@ -210,6 +210,34 @@ class RegisterTest extends TestCase
                             ->etc();
                 })
                 ->assertJsonPath("auth.username", $user->username);
+
+    }
+
+    /** @test */
+    public function register_confirmation_requires_a_token()
+    {
+        $response = $this->postJson(route("auth.confirm",  [ "token" => null ]));
+
+        $response->assertStatus(422)
+            ->assertJson(function (AssertableJson $assertableJson) {
+                return $assertableJson
+                    ->has("errors.token")
+                    ->etc();
+            });
+
+    }
+
+    /** @test */
+    public function register_confirmation_requires_a_valid_token()
+    {
+        $response = $this->postJson(route("auth.confirm",  [ "token" => "fake-world" ]));
+
+        $response->assertStatus(422)
+            ->assertJson(function (AssertableJson $assertableJson) {
+                return $assertableJson
+                    ->has("errors.token")
+                    ->etc();
+            });
 
     }
 }

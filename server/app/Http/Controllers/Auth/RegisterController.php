@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegistrationRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\{ Mail, Hash };
@@ -11,21 +12,9 @@ use App\Mail\RegistrationToken;
 
 class RegisterController extends Controller
 {
-    public function store(Request $request)
+    public function store(RegistrationRequest $request)
     {
-        $this->validate($request, [
-            "name" => "required|max:255",
-            "email" => "required|unique:users",
-            "username" => "required|unique:users",
-            "password" => "required|min:8"
-        ]);
-
-        $formAttributes = $request->merge([
-            "password" => Hash::make($request->password),
-            "remember_token" => Str::random(5)
-        ])->only([ "name", "username", "password", "email", "remember_token" ]);
-
-        $user = User::create($formAttributes);
+        $user = User::create($request->data());
 
         Mail::to($user->email)->send(new RegistrationToken($user));
 
@@ -37,8 +26,20 @@ class RegisterController extends Controller
     public function confirm(Request $request)
     {
         $user = User::where("remember_token", "=", $request->token)
-                    ->whereNull("email_verified_at")
-                    ->first();
+                ->whereNull("email_verified_at")
+                ->first();
+
+        $this->validate($request, [
+            "token" => [
+                "required",
+                function($attribute, $value, $fail) use ($user) {
+                    if(! $user) {
+                        $fail("The provided ". $attribute . " is invalid");
+                    }
+                }
+            ]
+        ]);
+
 
         $user->update([
             "email_verified_at" => now(),
