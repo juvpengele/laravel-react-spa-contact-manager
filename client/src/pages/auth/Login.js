@@ -5,8 +5,8 @@ import { usePageTitle } from "../../hooks"
 
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage} from "formik";
-import {httpClient} from "../../config";
-import {handleFormErrors} from "../../utilities/helpers";
+import { httpClient } from "../../config";
+import { handleFormErrors } from "../../utilities/helpers";
 
 
 const validationSchema = Yup.object().shape({
@@ -15,7 +15,6 @@ const validationSchema = Yup.object().shape({
 });
  
 function Login() {
-    usePageTitle("Login");
     const initialValues = {
         email: "",
         password: ""
@@ -40,7 +39,7 @@ function Login() {
             <div className="pt-2 flex items-center justify-end">
                 Create a new account ?
                 <Link to="/auth/register"
-                      className="border-2 border-purple-400 text-purple-800 hover:text-white hover:bg-purple-800 text-white px-5 py-1 rounded-md ml-2">
+                      className="btn-outline-primary">
                     Sign up
                 </Link>
             </div>
@@ -72,12 +71,12 @@ function Login() {
                                 </div>
                                 <div className="flex items-center justify-end pt-6">
                                     <Link
-                                        className="border-gray-400 border-2 text-gray-700 bg-white-800 text-white px-5 py-2 rounded-md mr-2"
+                                        className="btn-white"
                                         to="/">
                                         Go home
                                     </Link>
                                     <button
-                                        className="border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md"
+                                        className="btn-primary"
                                         disabled={!formik.isValid || formik.isSubmitting}
                                     >
                                         Login

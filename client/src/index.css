@@ -10,3 +10,15 @@
 .form-input {
     @apply border-gray-300 border-2 rounded-md px-3 py-2 block w-full focus:outline-none;
 }
+
+.btn-primary {
+    @apply border-2 border-purple-400 text-white bg-purple-800 text-white px-5 py-2 rounded-md;
+}
+
+.btn-outline-primary {
+    @apply border-2 border-purple-400 text-purple-800 hover:text-white hover:bg-purple-800 text-white px-5 py-1 rounded-md ml-2;
+}
+
+.btn-white {
+    @apply border-gray-400 border-2 text-gray-700 bg-white text-white px-5 py-2 rounded-md mr-2;
+}
