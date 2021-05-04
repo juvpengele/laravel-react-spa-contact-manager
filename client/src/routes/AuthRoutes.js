@@ -1,9 +1,13 @@
 import React from "react";
 import { Route } from "react-router-dom";
+import AuthLayout from "../layouts/AuthLayout";
 
 function AuthRoutes({ path, component, ...rest }) {
-
-    return <Route component={component} {...rest} />
+    return (
+        <AuthLayout>
+            <Route component={component} {...rest} />
+        </AuthLayout>
+    )
 
 }
 
