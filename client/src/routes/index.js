@@ -6,18 +6,21 @@ import {
     Home, Register, Login
 } from "../pages"
 import Confirm from "../pages/auth/Confirm";
+import {AuthProvider} from "../context";
+import React from "react";
 
 function Routes() {
     return (
-        <Router>
-            <Switch>
-                <Route path='/' component={Home} exact />
-                <AuthRoutes path="/auth/login" component={Login} />
-                <AuthRoutes path="/auth/register" component={Register} />
-                <AuthRoutes path="/auth/confirm" component={Confirm} />
-            </Switch>
-        </Router>
-
+        <AuthProvider>
+            <Router>
+                <Switch>
+                    <Route path='/' component={Home} exact />
+                    <AuthRoutes path="/auth/login" component={Login} />
+                    <AuthRoutes path="/auth/register" component={Register} />
+                    <AuthRoutes path="/auth/confirm" component={Confirm} />
+                </Switch>
+            </Router>
+        </AuthProvider>
     )
 }
 

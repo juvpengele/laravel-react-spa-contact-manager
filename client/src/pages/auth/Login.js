@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage} from "formik";
 import { httpClient } from "../../config";
 import { handleFormErrors } from "../../utilities/helpers";
+import { Loader } from "../../components/utilities";
 
 
 const validationSchema = Yup.object().shape({
@@ -76,9 +77,10 @@ function Login() {
                                         Go home
                                     </Link>
                                     <button
-                                        className="btn-primary"
-                                        disabled={!formik.isValid || formik.isSubmitting}
+                                        className="btn-primary flex items-center"
+                                        disabled={! formik.isValid || formik.isSubmitting}
                                     >
+                                        { formik.isSubmitting && <Loader className="mr-2"/>}
                                         Login
                                     </button>
                                 </div>
