@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -49,7 +50,7 @@ class RegisterTest extends TestCase
 
         $jsonResponse = $response->json();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(201, $response->getStatusCode());
         $this->assertContains("message", array_keys($jsonResponse));
     }
 
@@ -176,4 +177,68 @@ class RegisterTest extends TestCase
 
         $registrationMail->assertSeeInHtml($user->remember_token);
     }
+
+    /** @test */
+    public function a_user_can_confirm_his_email()
+    {
+        $this->withoutExceptionHandling();
+
+        $confirmationToken = "12345";
+        $user = User::factory()->create([ "remember_token" => $confirmationToken, "email_verified_at" => null ]);
+
+        $this->postJson(route("auth.confirm",  [ "token" => $confirmationToken ]));
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
+        $this->assertNull($user->fresh()->remember_token);
+    }
+
+    /** @test */
+    public function when_a_user_confirm_his_email_he_receives_his_token()
+    {
+        $this->withoutExceptionHandling();
+
+        $confirmationToken = "12345";
+        $user = User::factory()->create([ "remember_token" => $confirmationToken, "email_verified_at" => null ]);
+
+        $response = $this->postJson(route("auth.confirm",  [ "token" => $confirmationToken ]));
+
+        $response->assertStatus(200)
+                ->assertJson(function (AssertableJson $assertableJson) use ($user) {
+                    return $assertableJson
+                            ->has("api_token")
+                            ->has("auth")
+                            ->etc();
+                })
+                ->assertJsonPath("auth.username", $user->username);
+
+    }
+
+    /** @test */
+    public function register_confirmation_requires_a_token()
+    {
+        $response = $this->postJson(route("auth.confirm",  [ "token" => null ]));
+
+        $response->assertStatus(422)
+            ->assertJson(function (AssertableJson $assertableJson) {
+                return $assertableJson
+                    ->has("errors.token")
+                    ->etc();
+            });
+
+    }
+
+    /** @test */
+    public function register_confirmation_requires_a_valid_token()
+    {
+        $response = $this->postJson(route("auth.confirm",  [ "token" => "fake-world" ]));
+
+        $response->assertStatus(422)
+            ->assertJson(function (AssertableJson $assertableJson) {
+                return $assertableJson
+                    ->has("errors.token")
+                    ->etc();
+            });
+
+    }
 }
+

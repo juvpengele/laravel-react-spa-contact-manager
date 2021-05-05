@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Auth\{ RegisterController};
+use App\Http\Controllers\Auth\{ RegisterController, LoginController};
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +28,6 @@ Route::get("/", function() {
 
 Route::group(["prefix" => "auth"], function() {
     Route::post("register", [RegisterController::class, "store"])->name("auth.register");
+    Route::post("confirm", [RegisterController::class, "confirm"])->name("auth.confirm");
+    Route::post("login", LoginController::class)->name("auth.login");
 });
