@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React from "react";
 
 import AuthRoutes from "./AuthRoutes";
-
 import {
-    Home, Register, Login
+    Home, Register, Login, Dashboard
 } from "../pages"
 import Confirm from "../pages/auth/Confirm";
 import {AuthProvider} from "../context";
-import React from "react";
+
+import ProtectedRoutes from "./ProtectedRoutes";
 
 function Routes() {
     return (
@@ -18,6 +19,7 @@ function Routes() {
                     <AuthRoutes path="/auth/login" component={Login} />
                     <AuthRoutes path="/auth/register" component={Register} />
                     <AuthRoutes path="/auth/confirm" component={Confirm} />
+                    <ProtectedRoutes path="/dashboard" component={Dashboard}/>
                 </Switch>
             </Router>
         </AuthProvider>

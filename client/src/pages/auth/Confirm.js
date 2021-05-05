@@ -1,5 +1,5 @@
-import React from "react";
-import {Link} from "react-router-dom";
+import React  from "react";
+import {Link, useHistory } from "react-router-dom";
 import MaskInput from 'react-maskinput';
 import { useFormik} from "formik";
 import * as Yup from "yup"
@@ -8,6 +8,7 @@ import {httpClient} from "../../config";
 import {handleFormErrors} from "../../utilities/helpers";
 import { useToasts } from "react-toast-notifications";
 import {usePageTitle} from "../../hooks";
+import {AuthContext} from "../../context";
 
 const validationSchema = Yup.object().shape({
     token: Yup.string().required("Le champ est requis")
@@ -27,14 +28,17 @@ function Confirm() {
         onSubmit: confirmToken
     });
     const { addToast } = useToasts();
+    const history = useHistory();
+    const { login } = React.useContext(AuthContext)
 
 
     async function confirmToken(formValues, onSubmittingProps) {
         try {
-            await httpClient().post("/auth/confirm", formValues);
+            const { data } = await httpClient().post("/auth/confirm", formValues);
             addToast("Votre e-mail a été confirmée avec succès");
 
-            // Redirect ...
+            login(data);
+            history.push("/dashboard")
         } catch(errors) {
             if(errors.response?.data?.errors) {
                 handleFormErrors(errors.response?.data?.errors, onSubmittingProps)
@@ -51,7 +55,7 @@ function Confirm() {
                     <div className="mb-4 mt-4">
                         <label htmlFor="password">Token</label>
                         <MaskInput alwaysShowMask maskChar=""
-                                   mask="aaaaa"
+                                   mask="*****"
                                    className="form-input"
                                    placeholder="Enter the token you received by email"
                                    { ...formik.getFieldProps("token") }

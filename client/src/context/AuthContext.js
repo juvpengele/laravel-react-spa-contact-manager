@@ -1,28 +1,27 @@
-import React, {useState, createContext, useEffect} from "react";
+import React, {useState, createContext } from "react";
 import Storage from "../utilities/Storage";
 
+
 const AuthContext = createContext({
-    auth: {}
+    auth: null
 });
 
 const AuthProvider = ({ children}) => {
-   const [auth, setAuth] = useState({});
 
-   function authenticateUser() {
-       const auth = Storage.get("auth");
+    function initialAuthState() {
+        const auth = Storage.get("auth");
 
-       if(auth) {
-           setAuth(auth);
-       }
-   }
+        return auth ? { auth } : null;
+    }
 
-   useEffect(() => {
-        authenticateUser();
-   }, []);
+    const [auth, setAuth] = useState(() => initialAuthState());
 
-   function login(auth) {
-       Storage.add("auth", auth)
+
+   function login(auth, callback) {
        setAuth(auth);
+       Storage.add("auth", auth);
+
+       return true;
    }
 
    function logOut() {
@@ -31,7 +30,11 @@ const AuthProvider = ({ children}) => {
    }
 
    function isLoggedIn() {
-        return !! auth;
+       if(auth) {
+           return auth.auth.hasOwnProperty("api_token") || false;
+       }
+
+       return false;
    }
 
    return (

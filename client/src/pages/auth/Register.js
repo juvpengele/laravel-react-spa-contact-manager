@@ -38,11 +38,6 @@ function Register() {
                 placement: "bottom-right"
             });
 
-            addToast("Bravo ! Votre inscription s'est bien passée... ", {
-                appearance: "success",
-                placement: "bottom-right"
-            });
-
             history.push("/auth/confirm");
 
         } catch(errors) {

@@ -1,10 +1,13 @@
 const Storage = {
     init() {
-        this.storage = localStorage
+        this.storage = localStorage;
+        return this;
     },
 
     add(key, value) {
         this.storage.setItem(key, JSON.stringify(value));
+
+        return true;
     },
 
     get(key) {

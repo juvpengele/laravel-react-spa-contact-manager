@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import { usePageTitle } from "../../hooks"
 
@@ -8,6 +8,7 @@ import { Formik, Form, Field, ErrorMessage} from "formik";
 import { httpClient } from "../../config";
 import { handleFormErrors } from "../../utilities/helpers";
 import { Loader } from "../../components/utilities";
+import {AuthContext} from "../../context";
 
 
 const validationSchema = Yup.object().shape({
@@ -16,6 +17,10 @@ const validationSchema = Yup.object().shape({
 });
  
 function Login() {
+
+    usePageTitle("Login");
+    const { login } =  React.useContext(AuthContext);
+    const history = useHistory();
     const initialValues = {
         email: "",
         password: ""
@@ -23,17 +28,19 @@ function Login() {
 
     async function handleSubmit(formValues, onSubmittingProps) {
         try {
-            const response = await httpClient().post("/auth/login", formValues);
-            console.log(response)
+            const { data } = await httpClient().post("/auth/login", formValues);
+
+            login(data, () => {
+                history.push("/dashboard");
+            });
+
+
         } catch(errors) {
             if(errors.response?.data?.errors) {
                 handleFormErrors(errors.response?.data?.errors, onSubmittingProps)
             }
         }
-
     }
-
-    usePageTitle("Login");
 
     return (
         <div className="h-full p-6 flex flex-col">
