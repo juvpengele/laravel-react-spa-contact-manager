@@ -1,5 +1,7 @@
 <?php
 
+use App\Mail\RegistrationToken;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(["prefix" => "test"], function() {
+    Route::get("/registration-mail", function() {
+       $user = User::factory()->make();
+
+       return (new RegistrationToken($user))->render();
+    });
 });
