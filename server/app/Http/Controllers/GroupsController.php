@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GroupRequest;
 use App\Models\Group;
 use App\VO\ImageUploader;
 use Illuminate\Http\Request;
@@ -9,26 +10,18 @@ use App\Http\Resources\Group as GroupResource;
 
 class GroupsController extends Controller
 {
-    public function store(Request $request)
+    public function store(GroupRequest $request)
     {
-        $request->validate([
-            "name" => "required"
-        ]);
+        $group = Group::create($request->getFormAttributes());
 
-        if($request->image) {
-            $imageName = ImageUploader::generateName();
-        }
+        return new GroupResource($group);
+    }
 
+    public function update(GroupRequest $request, Group $group)
+    {
+        abort_if($group->user_id != auth()->id(), 403, "You are not allowed to update this group");
 
-        $formAttributes = $request->merge(["image_name" => $imageName ?? null, "user_id" => auth()->id()])
-                                  ->only(["name", "description", "image_name", "user_id"]);
-
-        $group = Group::create($formAttributes);
-
-        if($group->image_name) {
-            $group->image()->save($request->file("image"), $imageName);
-        }
-
+        $group->update($request->getFormAttributes());
 
         return new GroupResource($group);
     }

@@ -16,11 +16,10 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string("name")->index();
-            $table->string("image_name")->nullable();
             $table->text("description")->nullable();
             $table->foreignId("user_id")->constrained("users");
 
-            $table->unique(["user_id", "title"]);
+            $table->unique(["user_id", "name"]);
             $table->timestamps();
         });
     }

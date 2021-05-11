@@ -21,7 +21,6 @@ class GroupFactory extends Factory
     {
         return [
             "name" => $this->faker->word,
-            "image_name" => "image.png",
             "description" => Str::substr($this->faker->paragraph, 0, 200),
             "user_id"  => User::factory()->create()->id
         ];

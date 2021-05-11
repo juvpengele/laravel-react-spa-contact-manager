@@ -12,7 +12,6 @@ class Group extends JsonResource
         return [
             "name" => $this->name,
             "description" => $this->description,
-            "image" => $this->image()->url,
             "user_id" => $this->user_id
         ];
     }

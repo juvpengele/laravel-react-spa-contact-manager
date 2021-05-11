@@ -6,7 +6,6 @@ use App\Models\Group;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -28,7 +27,6 @@ class GroupManagementTest extends TestCase
     protected function formAttributes(array $attributes = []): array
     {
         $groupAttributes = Group::factory()->raw();
-        $groupAttributes["image"] = UploadedFile::fake()->image("image.png");
 
         return array_merge($groupAttributes, $attributes);
     }
@@ -63,19 +61,6 @@ class GroupManagementTest extends TestCase
         ]);
     }
 
-    public function test_we_can_upload_a_file_with_a_group()
-    {
-        Storage::fake("public");
-
-        $this->postJSON(
-            route("groups.store"), $formAttributes = $this->formAttributes(),
-            $this->authHeaders()
-        );
-
-        $group = Group::first();
-        Storage::disk("public")->assertExists($group->image_name);
-    }
-
     public function test_a_group_creation_requires_a_name()
     {
         $formAttributes = $this->formAttributes(["name" => null]);
@@ -103,4 +88,131 @@ class GroupManagementTest extends TestCase
             $this->authHeaders()
         )->assertStatus(201);
     }
+
+
+    /** @test */
+    public function a_user_can_update_a_group()
+    {
+        $john = $this->auth;
+        $group = Group::factory()->create([
+            "user_id" => $john->id
+        ]);
+
+        $formAttributes = $this->formAttributes();
+
+        $response = $this->putJson(
+            route("groups.update", $group->id), $formAttributes,
+            $this->authHeaders()
+        )->assertStatus(200);
+
+        $group = $group->fresh();
+        $this->assertDatabaseHas("groups", [
+            "id" =>  $group->id,
+            "name" => $formAttributes["name"]
+        ]);
+
+        $response->assertJson([
+            "data" => [
+                "name" => $group->name,
+                "description" => $group->description,
+                "user_id" => $john->id
+            ]
+        ]);
+    }
+
+    /** @test */
+    public function a_user_can_only_update_his_groups()
+    {
+        $group = Group::factory()->create([
+            "user_id" => User::factory()->create()->id
+        ]);
+
+        $formAttributes = $this->formAttributes();
+
+        $response = $this->putJson(
+            route("groups.update", $group->id), $formAttributes,
+            $this->authHeaders()
+        )->assertStatus(403);
+
+        $group = $group->fresh();
+        $this->assertDatabaseMissing("groups", [
+            "id" =>  $group->id,
+            "name" => $formAttributes["name"]
+        ]);
+
+
+        $response->assertJson([
+            "message" => "You are not allowed to update this group",
+        ]);
+
+    }
+
+    /** @test */
+    public function a_group_update_requires_a_name()
+    {
+
+        $group = Group::factory()->create([
+            "user_id" => $this->auth->id,
+        ]);
+
+        $formAttributes = $this->formAttributes(["name" => null]);
+
+        $this->putJson(
+            route("groups.update", $group->id), $formAttributes,
+            $this->authHeaders()
+        )->assertStatus(422)
+            ->assertJson(function (AssertableJson $assertableJson) {
+            return $assertableJson
+                ->has("errors.name")
+                ->etc();
+        });
+    }
+
+    /** @test */
+    public function a_user_can_create_only_one_name_per_group()
+    {
+        $group = Group::factory()->create([
+            "user_id" => $this->auth->id,
+        ]);
+
+        $formAttributes = $this->formAttributes(["name" => $group->name]);
+
+        $this->postJson(
+            route("groups.store"), $formAttributes,
+            $this->authHeaders()
+        )->assertStatus(422)
+        ->assertJson(function (AssertableJson $assertableJson) {
+            return $assertableJson
+                ->has("errors.name")
+                ->etc();
+        });
+    }
+
+    /** @test */
+    public function a_user_can_not_update_a_group_with_another_one()
+    {
+        Group::factory()->create([
+            "name" => "First group",
+            "user_id" => $this->auth->id,
+        ]);
+
+        $group = Group::factory()->create([
+            "name" => "Second group",
+            "user_id" => $this->auth->id,
+        ]);
+
+        $formAttributes = $this->formAttributes(["name" => "First group"]);
+
+        $this->putJson(
+            route("groups.update", $group->id), $formAttributes,
+            $this->authHeaders()
+        )
+        ->assertStatus(422)
+        ->assertJson(function (AssertableJson $assertableJson) {
+            return $assertableJson
+                ->has("errors.name")
+                ->etc();
+        });
+    }
+    
 }
