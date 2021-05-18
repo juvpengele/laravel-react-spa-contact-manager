@@ -12,5 +12,13 @@ class Group extends Model
 
     protected $fillable = [ "name", "description", "user_id"];
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class, "user_id");
+    }
 
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, "group_id");
+    }
 }

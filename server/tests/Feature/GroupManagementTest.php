@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
+use Tests\Utils\SqlDebugger;
 
 class GroupManagementTest extends TestCase
 {
@@ -36,14 +37,27 @@ class GroupManagementTest extends TestCase
         Storage::fake("public");
 
         $this->withoutExceptionHandling();
+        $authHeader = $this->authHeaders();
+        $formAttributes = $this->formAttributes();
+
 
         $response = $this->postJSON(
-                route("groups.store"), $formAttributes = $this->formAttributes(),
-                $this->authHeaders()
+                route("groups.store"), $formAttributes,
+                $authHeader
             )->assertStatus(201);
 
+        SqlDebugger::stopListening();
 
-        $response->assertJsonPath("data.name", $formAttributes["name"]);
+        $group = Group::first();
+        $response->assertJson([
+            "data" => [
+                "name" => $group->name,
+                "description" => $group->description,
+                "user_id" => $this->auth->id,
+                "contacts_count" => 0
+            ]
+        ]);
+
         $this->assertDatabaseHas("groups", [
             "name" => $formAttributes["name"]
         ]);
@@ -115,7 +129,8 @@ class GroupManagementTest extends TestCase
             "data" => [
                 "name" => $group->name,
                 "description" => $group->description,
-                "user_id" => $john->id
+                "user_id" => $john->id,
+                "contacts_count" => 0
             ]
         ]);
     }
@@ -189,22 +204,22 @@ class GroupManagementTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_not_update_a_group_with_another_one()
+    public function a_user_can_not_update_a_group_with_existing_name()
     {
+        $groupName = "First group";
+
         Group::factory()->create([
-            "name" => "First group",
+            "name" => $groupName,
             "user_id" => $this->auth->id,
         ]);
 
         $group = Group::factory()->create([
-            "name" => "Second group",
             "user_id" => $this->auth->id,
         ]);
 
-        $formAttributes = $this->formAttributes(["name" => "First group"]);
 
         $this->putJson(
-            route("groups.update", $group->id), $formAttributes,
+            route("groups.update", $group->id), $this->formAttributes(["name" => $groupName]),
             $this->authHeaders()
         )
         ->assertStatus(422)
@@ -214,5 +229,34 @@ class GroupManagementTest extends TestCase
                 ->etc();
         });
     }
-    
+
+
+    /** @test */
+    public function a_user_can_delete_his_group()
+    {
+        $this->withoutExceptionHandling();
+
+        $group = Group::factory()->create([
+            "user_id" => $this->auth->id,
+        ]);
+
+        $this->deleteJson(
+            route("groups.destroy", $group->id), [],
+            $this->authHeaders()
+        )->assertStatus(204);
+    }
+
+    /** @test */
+    public function only_group_owner_can_delete_his_group()
+    {
+        $group = Group::factory()->create([
+            "user_id" => User::factory()->create()->id,
+        ]);
+
+        $this->deleteJson(
+            route("groups.destroy", $group->id), [],
+            $this->authHeaders()
+        )->assertStatus(403);
+    }
+
 }
