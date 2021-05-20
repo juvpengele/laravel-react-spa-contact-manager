@@ -46,7 +46,6 @@ class GroupManagementTest extends TestCase
                 $authHeader
             )->assertStatus(201);
 
-        SqlDebugger::stopListening();
 
         $group = Group::first();
         $response->assertJson([

@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { Route, useHistory } from "react-router-dom";
 import { AuthContext } from "../context";
+import AppLayout from "../layouts/AppLayout";
 
 function ProtectedRoutes({ path, component, ...rest }) {
 
@@ -18,7 +19,11 @@ function ProtectedRoutes({ path, component, ...rest }) {
         }
     }
 
-    return <Route component={component} {...rest} />
+    return (
+        <AppLayout>
+            <Route component={component} {...rest} />
+        </AppLayout>
+    )
     
 }
 

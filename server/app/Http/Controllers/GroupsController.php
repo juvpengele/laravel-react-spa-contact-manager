@@ -11,8 +11,6 @@ class GroupsController extends Controller
 {
     public function store(GroupRequest $request)
     {
-        SqlDebugger::debug();
-
         $group = Group::create($request->getFormAttributes());
         $group->loadCount("contacts");
 
@@ -21,7 +19,7 @@ class GroupsController extends Controller
 
     public function update(GroupRequest $request, Group $group)
     {
-       $this->applyOwnerGuard($group, "You are not allowed to update this group");
+        $this->applyOwnerGuard($group, "You are not allowed to update this group");
 
         $group->update($request->getFormAttributes());
         $group->loadCount("contacts");
