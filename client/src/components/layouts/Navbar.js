@@ -18,9 +18,6 @@ const linksMap = [
 
 function Navbar() {
 
-    const location = useLocation();
-
-    console.log(location)
 
     const [userDropdownOpen, setUserDropdownOpen] = React.useState(false)
 
@@ -28,44 +25,19 @@ function Navbar() {
         setUserDropdownOpen((userDropdownOpen) => !userDropdownOpen);
     }
 
-    function activeLinkClassName(link) {
-        let className = "mr-16 pb-4 "
-
-        if(location.pathname.includes(link)) {
-            className += "border-b-4 border-black"
-        } else {
-            className += "hover:border-b-4 hover:border-black"
-        }
-
-        return className ;
-    }
 
     return (
-
-
-        <div className="flex justify-between items-center px-6 py-4 border-2 border-color-gray-100">
-            <Link to="/dashboard">
-                <img src="/logo.png" alt="" width="30"/>
-            </Link>
-
-            <div>
-                {
-                    linksMap.map((link) => (
-                        <Link to={link.link}
-                              className={ activeLinkClassName(link.link)}
-                              key={link.name}>
-                            { link.name }
-                        </Link>
-                    ))
-                }
-            </div>
-
-            <div>
+        <div className="flex justify-end rounded ">
+            <div className="pr-8 pt-5">
                 <a href="#" className="mr-6 text-xl">
                     <i className="la la-bell"></i>
                 </a>
                 <a href="#" onClick={toggleUserDropdown}>
-                    User
+                    <span className="mr-2">
+                        User
+                    </span>
+
+                    <i className="la la-angle-down"></i>
                 </a>
                 <div className={
                     userDropdownOpen ? "origin-top-right absolute right-5 mt-4 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 " : "hidden"

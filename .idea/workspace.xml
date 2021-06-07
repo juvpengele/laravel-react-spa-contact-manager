@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8596eb92-ed93-425e-a6e0-9d691d6fad59" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/laravel-react-contact-management.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/layouts/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/layouts/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/layouts/Sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/layouts/Sidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/layouts/AppLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/layouts/AppLayout.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +12,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/server/composer.json</pharConfigPath>
     <execution>
       <executable />
@@ -159,7 +156,8 @@
       <option name="presentableId" value="Default" />
       <updated>1621356829126</updated>
       <workItem from="1621356831000" duration="9000" />
-      <workItem from="1623081640901" duration="2590000" />
+      <workItem from="1623081640901" duration="2715000" />
+      <workItem from="1623086510947" duration="708000" />
     </task>
     <servers />
   </component>
