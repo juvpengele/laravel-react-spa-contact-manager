@@ -12,16 +12,19 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $appends = [
+        "avatar"
+    ];
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'username',
+        'profile_picture',
         'remember_token',
         'email_verified_at'
     ];
-
 
     protected $hidden = [
         'password',
@@ -31,13 +34,13 @@ class User extends Authenticatable
         'email_verified_at'
     ];
 
-
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function getApiData(): array
-    {
 
+    public function getAvatarAttribute()
+    {
+        return url("/images/avatars/" . $this->profile_picture);
     }
 }
