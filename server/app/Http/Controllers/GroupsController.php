@@ -43,5 +43,4 @@ class GroupsController extends Controller
         );
     }
 
-
 }

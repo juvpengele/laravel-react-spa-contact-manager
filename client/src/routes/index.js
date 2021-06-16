@@ -9,6 +9,7 @@ import Confirm from "../pages/auth/Confirm";
 import {AuthProvider} from "../context";
 
 import ProtectedRoutes from "./ProtectedRoutes";
+import Groups from "../pages/Groups";
 
 function Routes() {
     return (
@@ -20,6 +21,7 @@ function Routes() {
                     <AuthRoutes path="/auth/register" component={Register} />
                     <AuthRoutes path="/auth/confirm" component={Confirm} />
                     <ProtectedRoutes path="/dashboard" component={Dashboard}/>
+                    <ProtectedRoutes path="/groups" component={Groups}/>
                 </Switch>
             </Router>
         </AuthProvider>
