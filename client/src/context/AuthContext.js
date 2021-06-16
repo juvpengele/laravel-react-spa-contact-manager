@@ -11,22 +11,20 @@ const AuthProvider = ({ children}) => {
     function initialAuthState() {
         const auth = Storage.get("auth");
 
-        return auth ? { auth } : null;
+        return auth ? { ...auth } : null;
     }
 
     const [auth, setAuth] = useState(() => initialAuthState());
 
 
-   function login(auth, callback) {
-       setAuth(auth);
+   function login(auth) {
        Storage.add("auth", auth);
-
-       return true;
+       setAuth(auth);
    }
 
    function logOut() {
         Storage.remove("auth");
-        setAuth({})
+        setAuth(null)
    }
 
    function isLoggedIn() {

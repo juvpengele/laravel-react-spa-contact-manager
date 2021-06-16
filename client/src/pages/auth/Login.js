@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Link, useHistory } from "react-router-dom";
 
 import { usePageTitle } from "../../hooks"
@@ -18,22 +18,21 @@ const validationSchema = Yup.object().shape({
  
 function Login() {
 
-    usePageTitle("Login");
-    const { login } =  React.useContext(AuthContext);
+    const { login, auth } =  React.useContext(AuthContext);
     const history = useHistory();
     const initialValues = {
         email: "",
         password: ""
     };
 
+    usePageTitle("Login");
+
+
     async function handleSubmit(formValues, onSubmittingProps) {
         try {
             const { data } = await httpClient().post("/auth/login", formValues);
 
-            login(data, () => {
-                history.push("/dashboard");
-            });
-
+            login(data)
 
         } catch(errors) {
             if(errors.response?.data?.errors) {

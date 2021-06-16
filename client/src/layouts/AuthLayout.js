@@ -13,7 +13,6 @@ function AuthLayout({ children }) {
                 </div>
             </div>
         </div>
-       
     )
 }
 

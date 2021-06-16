@@ -7,12 +7,12 @@ import {useToasts} from "react-toast-notifications";
 function AuthRoutes({ path, component, ...rest }) {
 
     const history = useHistory();
-    const { auth }= useContext(AuthContext)
-    const { addToast } = useToasts()
+    const { auth }= useContext(AuthContext);
+    const { addToast } = useToasts();
 
     useEffect(() =>  {
         redirectIfAuth();
-    }, [ auth ]);
+    }, [auth]);
 
     function redirectIfAuth() {
         if(auth) {

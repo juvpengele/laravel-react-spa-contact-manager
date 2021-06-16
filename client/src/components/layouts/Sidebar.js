@@ -1,5 +1,6 @@
-import React from "react";
-import {Link, useLocation } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import {Link, useLocation, useHistory } from "react-router-dom";
+import { AuthContext } from "../../context";
 
 const routes = [
     {
@@ -27,6 +28,13 @@ const routes = [
 function Sidebar(props) {
 
     const location = useLocation();
+    const { auth, logOut } = useContext(AuthContext);
+    const history = useHistory();
+
+    useEffect(() => {
+        // history.push("/")
+    }, [auth]);
+
 
     function isActive(route) {
         return location.pathname.includes(route);
@@ -34,6 +42,11 @@ function Sidebar(props) {
 
     function classNames() {
         return props.className + " flex flex-col p-6 justify-between";
+    }
+
+    function logOutUser(event) {
+        event.preventDefault();
+        logOut();
     }
 
     return (
@@ -44,7 +57,7 @@ function Sidebar(props) {
                     {
                         routes.map((route) => {
                             return (
-                                <div className={` ${isActive(route.link) ? "bg-blue-200 rounded-md -pl-1" : ""} pl-2`}>
+                                <div className={` ${isActive(route.link) ? "bg-blue-200 rounded-md -pl-1" : ""} pl-2`} key={route}>
                                     <Link to={route.link} key={route.link} className={` ${isActive(route.link) ? "bg-blue-200 rounded-md " : ""}  py-2 text-darkblue flex items-center`}>
                                         <i className={ `${isActive(route.link) ? "bg-white " : "bg-blue-50 " } la ${route.icon} flex mr-2  text-xl bg-white h-full px-2 py-1 rounded-md`}/>
                                         { route.name }
@@ -56,10 +69,12 @@ function Sidebar(props) {
                     }
                 </div>
             </div>
-            <span>
-                <i className="las la-power-off mr-2" />
-                Logout
-            </span>
+            <div>
+                <a href="#" className="py-2 text-darkblue flex items-center" onClick={logOutUser}>
+                    <i className="las la-power-off flex mr-2  text-xl bg-white h-full px-2 py-1 rounded-md bg-blue-50" />
+                    Logout
+                </a>
+            </div>
         </div>
     )
 }

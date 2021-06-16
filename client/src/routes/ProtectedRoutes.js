@@ -13,7 +13,6 @@ function ProtectedRoutes({ path, component, ...rest }) {
     }, [auth]);
 
     function redirectGuest() {
-
         if(! auth) {
             history.push("/auth/login");
         }
